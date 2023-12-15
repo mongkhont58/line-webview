@@ -1,16 +1,13 @@
+import liff from '@line/liff'
+import React, { useEffect, useState } from 'react'
 import logo from '../assets/react.svg';
-import liff from '@line/liff';
-import { useEffect, useState } from 'react';
-import Html5QrcodePlugin from '../components/Html5QrcodePlugin';
 
-function Test() {
+function UserProfile() {
   const [pictureUrl, setPictureUrl] = useState(logo);
   const [idToken, setIdToken] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [statusMessage, setStatusMessage] = useState("");
   const [userId, setUserId] = useState("");
-  const [decodedBarcode, setDecodeBarcode] = useState('')
-  const [locationAccess, setLocationAccess] = useState({ lat: '', lng: '' })
 
   useEffect(() => {
     initLine()
@@ -26,7 +23,7 @@ function Test() {
       if (liff.isLoggedIn()) {
         runApp()
       } else {
-        liff.login()
+        liff.login({ redirectUri: 'https://line-app.justplaybase.com/app-v1/sandbox/profile' })
       }
     }, err => {
       console.error(err)
@@ -37,9 +34,6 @@ function Test() {
     const idToken = liff.getIDToken()
     setIdToken(idToken)
     liff.getProfile().then(profile => {
-      navigator.geolocation.getCurrentPosition(function (position) {
-        setLocationAccess({ lat: position.coords.latitude, lng: position.coords.longitude })
-      })
       setDisplayName(profile?.displayName ?? '-')
       setPictureUrl(profile?.pictureUrl ?? '-')
       setStatusMessage(profile?.statusMessage ?? '-')
@@ -50,29 +44,19 @@ function Test() {
     })
   }
 
-  const onNewScanResult = (decodedText, decodedResult) => {
-    console.log('decodedResult', decodedResult);
-    // handle decoded results here
-    if (decodedText) {
-      setDecodeBarcode(decodedText)
-    }
-  }
-
-  const [qrCodeData, setQrCodeData] = useState('');
-  const handleScan = () => {
-    liff.scanCodeV2().then((result) => {
-      setQrCodeData(result.value ?? '');
-    });
-  };
-
   return (
-    <div className="App">
-      <header className="App-header">
-        <div style={{ textAlign: "center" }}>
-        </div>
-      </header>
+    <div>
+      <div style={{ textAlign: "center" }}>
+        <h1>Information</h1>
+        <hr />
+        <img src={pictureUrl} width="200px" height="200px" alt='logo' />
+        {/* <p style={{ textAlign: "left", marginLeft: "20%", marginRight: "20%", wordBreak: "break-all" }}><b>id token: </b> {idToken}</p> */}
+        <p style={{ textAlign: "left", marginLeft: "20%", marginRight: "20%", wordBreak: "break-all" }}><b>display name: </b> {displayName}</p>
+        <p style={{ textAlign: "left", marginLeft: "20%", marginRight: "20%", wordBreak: "break-all" }}><b>status message: </b> {statusMessage}</p>
+        <p style={{ textAlign: "left", marginLeft: "20%", marginRight: "20%", wordBreak: "break-all" }}><b>user id: </b> {userId}</p>
+      </div>
     </div>
-  );
+  )
 }
 
-export default Test;
+export default UserProfile

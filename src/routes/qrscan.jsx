@@ -1,14 +1,8 @@
-import logo from '../assets/react.svg';
 import liff from '@line/liff';
 import { useEffect, useState } from 'react';
 import Html5QrcodePlugin from '../components/Html5QrcodePlugin';
 
-function Test() {
-  const [pictureUrl, setPictureUrl] = useState(logo);
-  const [idToken, setIdToken] = useState("");
-  const [displayName, setDisplayName] = useState("");
-  const [statusMessage, setStatusMessage] = useState("");
-  const [userId, setUserId] = useState("");
+function QrScan() {
   const [decodedBarcode, setDecodeBarcode] = useState('')
   const [locationAccess, setLocationAccess] = useState({ lat: '', lng: '' })
 
@@ -40,10 +34,6 @@ function Test() {
       navigator.geolocation.getCurrentPosition(function (position) {
         setLocationAccess({ lat: position.coords.latitude, lng: position.coords.longitude })
       })
-      setDisplayName(profile?.displayName ?? '-')
-      setPictureUrl(profile?.pictureUrl ?? '-')
-      setStatusMessage(profile?.statusMessage ?? '-')
-      setUserId(profile?.userId ?? '-')
     }).catch(err => {
       console.error(err)
       logout()
@@ -58,21 +48,19 @@ function Test() {
     }
   }
 
-  const [qrCodeData, setQrCodeData] = useState('');
-  const handleScan = () => {
-    liff.scanCodeV2().then((result) => {
-      setQrCodeData(result.value ?? '');
-    });
-  };
-
   return (
     <div className="App">
-      <header className="App-header">
-        <div style={{ textAlign: "center" }}>
-        </div>
-      </header>
+      <div style={{ textAlign: "center" }}>
+        <Html5QrcodePlugin
+          fps={10}
+          qrbox={250}
+          disableFlip={false}
+          qrCodeSuccessCallback={onNewScanResult}
+        />
+        <p style={{ textAlign: "left", marginLeft: "20%", marginRight: "20%", wordBreak: "break-all" }}><b>Decoded: </b> {decodedBarcode}</p>
+      </div>
     </div>
   );
 }
 
-export default Test;
+export default QrScan;
