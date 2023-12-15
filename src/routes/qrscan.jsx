@@ -20,7 +20,7 @@ function QrScan() {
       if (liff.isLoggedIn()) {
         runApp()
       } else {
-        liff.login()
+        liff.login({ redirectUri: 'https://line-app.justplaybase.com/app-v1/sandbox/scan' })
       }
     }, err => {
       console.error(err)
