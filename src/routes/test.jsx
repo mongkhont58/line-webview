@@ -13,7 +13,7 @@ function Test() {
   const [locationAccess, setLocationAccess] = useState({ lat: '', lng: '' })
 
   useEffect(() => {
-    initLine()
+    // initLine()
   }, [])
 
   const logout = () => {
